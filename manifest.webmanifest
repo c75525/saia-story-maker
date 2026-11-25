@@ -1,0 +1,16 @@
+{
+  "name": "S.A.I.A. Story Maker",
+  "short_name": "Story Maker",
+  "description": "Create branded S.A.I.A. Instagram Stories.",
+  "start_url": "./",
+  "display": "standalone",
+  "background_color": "#f2f2f2",
+  "theme_color": "#e1dee8",
+  "icons": [
+    {
+      "src": "./assets/saia-favicon.png",
+      "sizes": "192x192",
+      "type": "image/png"
+    }
+  ]
+}
