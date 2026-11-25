@@ -43,7 +43,7 @@ app.innerHTML = `
       <div class="top-actions">
         <button class="icon-button" id="undo" title="Undo" aria-label="Undo" disabled>↶</button>
         <button class="icon-button" id="redo" title="Redo" aria-label="Redo" disabled>↷</button>
-        <button class="primary-button" id="download"><span class="download-long">Download </span>PNG</button>
+        <button class="primary-button" id="download">Save / Share</button>
       </div>
     </header>
 
@@ -585,12 +585,35 @@ async function downloadPng() {
     refreshFontObjects();
     canvas.discardActiveObject();
     canvas.requestRenderAll();
-    const url = canvas.toDataURL({ format: "png", quality: 1, multiplier: 1, enableRetinaScaling: false });
-    const link = document.createElement("a");
-    link.href = url;
-    link.download = `${cleanName(storyName).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "saia-story"}.png`;
-    link.click();
-    announce("1080 × 1920 PNG downloaded.");
+
+    const dataUrl = canvas.toDataURL({ format: "png", quality: 1, multiplier: 1, enableRetinaScaling: false });
+    const blob = await (await fetch(dataUrl)).blob();
+    const filename = `${cleanName(storyName).toLowerCase().replace(/[^a-z0-9]+/g, "-").replace(/^-|-$/g, "") || "saia-story"}.png`;
+    const file = new File([blob], filename, { type: "image/png", lastModified: Date.now() });
+    const shareData = { files: [file], title: "S.A.I.A. Story" };
+
+    if (navigator.share && navigator.canShare?.(shareData)) {
+      try {
+        await navigator.share(shareData);
+        announce("Story shared. On iPhone, choose Save Image to add it to Photos.");
+      } catch (shareError) {
+        if (shareError.name === "AbortError") {
+          announce("Save cancelled.");
+          return;
+        }
+        throw shareError;
+      }
+    } else {
+      const url = URL.createObjectURL(blob);
+      const link = document.createElement("a");
+      link.href = url;
+      link.download = filename;
+      document.body.append(link);
+      link.click();
+      link.remove();
+      setTimeout(() => URL.revokeObjectURL(url), 30_000);
+      announce("PNG downloaded. On a phone, find it in your browser’s Downloads or Files folder.");
+    }
   } catch (error) {
     console.error(error);
     announce(error.message || "The story could not be exported.", "error");
@@ -599,7 +622,7 @@ async function downloadPng() {
     if (previous) canvas.setActiveObject(previous);
     canvas.requestRenderAll();
     button.disabled = false;
-    button.innerHTML = '<span class="download-long">Download </span>PNG';
+    button.textContent = "Save / Share";
   }
 }
 

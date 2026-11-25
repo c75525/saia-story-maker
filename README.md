@@ -12,6 +12,7 @@ A mobile-first, browser-based Instagram Story creator for S.A.I.A. It combines a
 - Drag, resize, rotate, center, layer, duplicate, and delete
 - Undo and redo
 - Exact 1080 × 1920 PNG export without selection handles
+- Native mobile share sheet for saving the finished PNG to Photos/Gallery
 - Browser-local autosave and named drafts with visible storage-failure warnings
 - Uploaded PNG/JPEG/WebP images are resized and compressed before being embedded
 - Editable project JSON import/export with supported-element validation
@@ -54,6 +55,8 @@ Unit tests cover project validation, serialization, autosave, draft lifecycle be
 ## Use on a phone
 
 Open the deployed URL in Safari or Chrome. The app can be added to the home screen through the browser's share/install menu. Work autosaves only to that browser/device. Use **Export project** to move an editable story to another device.
+
+Tap **Save / Share** to open the phone's native share sheet with the finished PNG attached. On iPhone, choose **Save Image** to place it in Photos. Android options vary by device but appear in the system share sheet. Browsers do not permit websites to write silently to the photo gallery; desktop and unsupported browsers use a normal file download instead.
 
 Uploaded photos are resized and compressed before storage. A persistent warning appears if a photo-heavy design still exceeds the browser's local-storage quota; use **Export project** immediately if that warning appears.
 
